@@ -5,9 +5,11 @@ OAuth2\ServerBundle\Entity\ClientPublicKey:
         client_id:
             type:       string
             length:     50
+            column:     id
     fields:
-        public_key:
+        publicKey:
             type:       text
+            column:     public_key
     oneToOne:
       client:
         targetEntity: OAuth2\ServerBundle\Entity\Client

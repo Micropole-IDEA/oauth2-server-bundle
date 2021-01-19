@@ -2,12 +2,17 @@
 
 namespace OAuth2\ServerBundle\Exception;
 
-class ScopeNotFoundException extends \Exception
+use Exception;
+
+/**
+ * Class ScopeNotFoundException
+ */
+class ScopeNotFoundException extends Exception
 {
     /**
      * {@inheritDoc}
      */
-    public function getMessageKey()
+    public function getMessageKey(): string
     {
         return 'Scope could not be found.';
     }
@@ -15,7 +20,7 @@ class ScopeNotFoundException extends \Exception
     /**
      * {@inheritDoc}
      */
-    public function serialize()
+    public function serialize(): string
     {
         return serialize(array(
             parent::serialize(),
@@ -25,7 +30,7 @@ class ScopeNotFoundException extends \Exception
     /**
      * {@inheritDoc}
      */
-    public function unserialize($str)
+    public function unserialize(string $str)
     {
         list($parentData) = unserialize($str);
 

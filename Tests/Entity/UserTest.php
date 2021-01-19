@@ -2,29 +2,44 @@
 
 namespace OAuth2\ServerBundle\Tests\Entity;
 
+use Exception;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Entity\User;
+use PHPUnit_Framework_TestCase;
 
-class UserTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class UserTest
+ */
+class UserTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * testCreate
+     *
+     * @throws Exception
+     */
     public function testCreate()
     {
-        $container = ContainerLoader::buildTestContainer();
-        $em = $container->get('doctrine.orm.entity_manager');
+        try {
+            $container = ContainerLoader::buildTestContainer();
+            $emn = $container->get('doctrine.orm.entity_manager');
 
-        $user = new User();
-        $user->setUsername($name = 'test-user-'.rand());
-        $user->setPassword('very-secure');
-        $user->setSalt(sha1(time()));
+            $user = new User();
+            $name = 'test-user-' . rand();
+            $user->setUsername($name);
+            $user->setPassword('very-secure');
+            $user->setSalt(sha1(time()));
 
-        $em->persist($user);
-        $em->flush();
+            $emn->persist($user);
+            $emn->flush();
 
-        $stored = $em->find('OAuth2\ServerBundle\Entity\User', array('username' => $name));
+            $stored = $emn->find('OAuth2\ServerBundle\Entity\User', array('username' => $name));
 
-        $this->assertNotNull($stored);
-        $this->assertEquals($name, $stored->getUsername());
-        $this->assertEquals($user->getPassword(), $stored->getPassword());
-        $this->assertEquals($user->getSalt(), $stored->getSalt());
+            $this->assertNotNull($stored);
+            $this->assertEquals($name, $stored->getUsername());
+            $this->assertEquals($user->getPassword(), $stored->getPassword());
+            $this->assertEquals($user->getSalt(), $stored->getSalt());
+        } catch (Exception $exception) {
+            throw $exception;
+        }
     }
 }

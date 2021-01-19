@@ -2,16 +2,30 @@
 
 namespace OAuth2\ServerBundle\Storage;
 
+use Doctrine\ORM\ORMException;
+use OAuth2\ServerBundle\Entity\Client;
 use OAuth2\Storage\RefreshTokenInterface;
 use Doctrine\ORM\EntityManager;
+use OAuth2\ServerBundle\Entity\RefreshToken as EntityRefreshToken;
 
+/**
+ * Class RefreshToken
+ */
 class RefreshToken implements RefreshTokenInterface
 {
-    private $em;
+    /**
+     * @var EntityManager
+     */
+    private EntityManager $emn;
 
+    /**
+     * RefreshToken constructor.
+     *
+     * @param EntityManager $EntityManager
+     */
     public function __construct(EntityManager $EntityManager)
     {
-        $this->em = $EntityManager;
+        $this->emn = $EntityManager;
     }
 
     /**
@@ -21,12 +35,9 @@ class RefreshToken implements RefreshTokenInterface
      *
      * Required for OAuth2::GRANT_TYPE_REFRESH_TOKEN.
      *
-     * @param $refresh_token
-     * Refresh token to be check with.
+     * @param string $refreshToken Refresh token to be check with.
      *
-     * @return
-     * An associative array as below, and NULL if the refresh_token is
-     * invalid:
+     * @return array|null An associative array as below, and NULL if the refresh_token is invalid:
      * - refresh_token: Stored refresh token identifier.
      * - client_id: Stored client identifier.
      * - user_id: Stored user identifier.
@@ -37,9 +48,9 @@ class RefreshToken implements RefreshTokenInterface
      *
      * @ingroup oauth2_section_6
      */
-    public function getRefreshToken($refresh_token)
+    public function getRefreshToken($refreshToken): ?array
     {
-        $refreshToken = $this->em->getRepository('OAuth2ServerBundle:RefreshToken')->find($refresh_token);
+        $refreshToken = $this->emn->getRepository('OAuth2ServerBundle:RefreshToken')->find($refreshToken);
 
         if (!$refreshToken) {
             return null;
@@ -68,38 +79,39 @@ class RefreshToken implements RefreshTokenInterface
      *
      * Required for OAuth2::GRANT_TYPE_REFRESH_TOKEN.
      *
-     * @param $refresh_token
-     * Refresh token to be stored.
-     * @param $client_id
-     * Client identifier to be stored.
-     * @param $user_id
-     * User identifier to be stored.
-     * @param $expires
-     * expires to be stored.
-     * @param $scope
-     * (optional) Scopes to be stored in space-separated string.
+     * @param string      $refreshToken Refresh token to be stored.
+     * @param string      $clientId     Client identifier to be stored.
+     * @param string      $userId       User identifier to be stored.
+     * @param string      $expires      expires to be stored.
+     * @param string|null $scope       (optional) Scopes to be stored in space-separated string.
+     *
+     * @return null
+     *
+     * @throws ORMException
      *
      * @ingroup oauth2_section_6
      */
-    public function setRefreshToken($refresh_token, $client_id, $user_id, $expires, $scope = null)
+    public function setRefreshToken($refreshToken, $clientId, $userId, $expires, $scope = null)
     {
-        // Get Client Entity
-        $client = $this->em->getRepository('OAuth2ServerBundle:Client')->find($client_id);
+        /**
+         * @var Client $client
+         */
+        $client = $this->emn->getRepository('OAuth2ServerBundle:Client')->find($clientId);
         if (!$client) {
             return null;
         }
 
         // Create Refresh Token
-        $refreshToken = new \OAuth2\ServerBundle\Entity\RefreshToken();
-        $refreshToken->setToken($refresh_token);
+        $refreshToken = new EntityRefreshToken();
+        $refreshToken->setToken($refreshToken);
         $refreshToken->setClient($client);
-        $refreshToken->setUserId($user_id);
+        $refreshToken->setUserId($userId);
         $refreshToken->setExpires($expires);
         $refreshToken->setScope($scope);
 
         // Store Refresh Token
-        $this->em->persist($refreshToken);
-        $this->em->flush();
+        $this->emn->persist($refreshToken);
+        $this->emn->flush();
     }
 
     /**
@@ -113,15 +125,16 @@ class RefreshToken implements RefreshTokenInterface
      * any sort of success/failure, so you should bail out of the script
      * and provide a descriptive fail message.
      *
-     * @param $refresh_token
-     * Refresh token to be expirse.
+     * @param string $refreshToken Refresh token to be expirse.
+     *
+     * @throws ORMException
      *
      * @ingroup oauth2_section_6
      */
-    public function unsetRefreshToken($refresh_token)
+    public function unsetRefreshToken($refreshToken)
     {
-        $refreshToken = $this->em->getRepository('OAuth2ServerBundle:RefreshToken')->find($refresh_token);
-        $this->em->remove($refreshToken);
-        $this->em->flush();
+        $refreshToken = $this->emn->getRepository('OAuth2ServerBundle:RefreshToken')->find($refreshToken);
+        $this->emn->remove($refreshToken);
+        $this->emn->flush();
     }
 }

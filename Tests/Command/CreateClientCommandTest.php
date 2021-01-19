@@ -2,68 +2,88 @@
 
 namespace OAuth2\ServerBundle\Tests\Command;
 
+use Exception;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Command\CreateClientCommand;
+use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class CreateClientCommandTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class CreateClientCommandTest
+ */
+class CreateClientCommandTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * testCreateClientWithInvalidScope
+     *
+     * @throws Exception
+     */
     public function testCreateClientWithInvalidScope()
     {
-        $container = ContainerLoader::buildTestContainer();
-        $command = new CreateClientCommand();
-        $command->setContainer($container);
+        try {
+            $container = ContainerLoader::buildTestContainer();
+            $command = $container->get(CreateClientCommand::class);
 
-        $client_id    = 'Client-ID-'.rand();
-        $redirectUris = 'http://brentertainment.com';
-        $grantTypes   = 'authorization_code,client_credentials';
-        $scopes		  = 'fakescope';
+            $clientId = 'Client-ID-' . rand();
+            $redirectUris = 'http://brentertainment.com';
+            $grantTypes = 'authorization_code,client_credentials';
+            $scopes = 'fakescope';
 
-        $input = new ArgvInput(array('command', $client_id, $redirectUris, $grantTypes, $scopes));
-        $output = new BufferedOutput();
+            $input = new ArgvInput(array('command', $clientId, $redirectUris, $grantTypes, $scopes));
+            $output = new BufferedOutput();
 
-        $statusCode = $command->run($input, $output);
+            $statusCode = $command->run($input, $output);
 
-        $this->assertEquals(1, $statusCode);
-        $this->assertTrue(false !== strpos($output->fetch(), 'Scope not found, please create it first'));
+            $this->assertEquals(1, $statusCode);
+            $this->assertTrue(false !== strpos($output->fetch(), 'Scope not found, please create it first'));
+        } catch (Exception $exception) {
+            throw $exception;
+        }
     }
 
+    /**
+     * testCreateClient
+     *
+     * @throws Exception
+     */
     public function testCreateClient()
     {
-        $container = ContainerLoader::buildTestContainer();
-        $command = new CreateClientCommand();
-        $command->setContainer($container);
+        try {
+            $container = ContainerLoader::buildTestContainer();
+            $command = $container->get(CreateClientCommand::class);
+            $clientId = 'Client-ID-' . rand();
+            $redirectUris = 'http://brentertainment.com';
+            $grantTypes = 'authorization_code,client_credentials';
+            $scope = 'scope1';
 
-        $client_id    = 'Client-ID-'.rand();
-        $redirectUris = 'http://brentertainment.com';
-        $grantTypes   = 'authorization_code,client_credentials';
-        $scope        = 'scope1';
+            // ensure the scope exists
+            $scopeStorage = $container->get('oauth2.storage.scope');
+            if (!$scopeStorage->scopeExists($scope)) {
+                $scopeManager = $container->get('oauth2.scope_manager');
+                $scopeManager->createScope($scope, 'test scope');
+            }
 
-        // ensure the scope exists
-        $scopeStorage = $container->get('oauth2.storage.scope');
-        if (!$scopeStorage->scopeExists($scope)) {
-            $scopeManager = $container->get('oauth2.scope_manager');
-            $scopeManager->createScope($scope, 'test scope');
+            $input = new ArgvInput(array('command', $clientId, $redirectUris, $grantTypes, $scope));
+            $output = new BufferedOutput();
+
+            $statusCode = $command->run($input, $output);
+
+            $this->assertEquals(0, $statusCode, $output->fetch());
+
+            // verify client details have been stored
+            $storage = $container->get('oauth2.storage.client_credentials');
+            $client  = $storage->getClientDetails($clientId);
+
+            $this->assertNotNull($client);
+            $this->assertEquals($redirectUris, $client['redirect_uri']);
+            $this->assertEquals(explode(',', $grantTypes), $client['grant_types']);
+
+            // verify client scope has been stored
+            $clientScope = $storage->getClientScope($clientId);
+            $this->assertEquals($scope, $clientScope);
+        } catch (Exception $exception) {
+            throw $exception;
         }
-
-        $input = new ArgvInput(array('command', $client_id, $redirectUris, $grantTypes, $scope));
-        $output = new BufferedOutput();
-
-        $statusCode = $command->run($input, $output);
-
-        $this->assertEquals(0, $statusCode, $output->fetch());
-
-        // verify client details have been stored
-        $storage = $container->get('oauth2.storage.client_credentials');
-        $client  = $storage->getClientDetails($client_id);
-
-        $this->assertNotNull($client);
-        $this->assertEquals($redirectUris, $client['redirect_uri']);
-        $this->assertEquals(explode(',', $grantTypes), $client['grant_types']);
-
-        // verify client scope has been stored
-        $clientScope = $storage->getClientScope($client_id);
-        $this->assertEquals($scope, $clientScope);
     }
 }

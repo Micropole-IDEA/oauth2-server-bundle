@@ -2,13 +2,38 @@
 
 namespace OAuth2\ServerBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Exception;
+use OAuth2\ServerBundle\User\OAuth2UserInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CreateUserCommand extends ContainerAwareCommand
+/**
+ * Class CreateUserCommand
+ */
+class CreateUserCommand extends Command
 {
+    /**
+     * @var OAuth2UserInterface
+     */
+    protected OAuth2UserInterface $userProvider;
+
+    /**
+     * CreateUserCommand constructor.
+     *
+     * @param OAuth2UserInterface $userProvider
+     * @param string|null         $name
+     */
+    public function __construct(OAuth2UserInterface $userProvider, ?string $name = null)
+    {
+        parent::__construct($name);
+        $this->userProvider = $userProvider;
+    }
+
+    /**
+     * configure
+     */
     protected function configure()
     {
         $this
@@ -19,17 +44,27 @@ class CreateUserCommand extends ContainerAwareCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * execute
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $container = $this->getContainer();
-        $userProvider = $container->get('oauth2.user_provider');
-
         try {
-            $userProvider->createUser($input->getArgument('username'), $input->getArgument('password'));
-        } catch (\Doctrine\DBAL\DBALException $e) {
-            $output->writeln('<fg=red>Unable to create user ' . $input->getArgument('username') . '</fg=red>');
+            $this->userProvider->createUser(
+                $input->getArgument('username'),
+                $input->getArgument('password')
+            );
+        } catch (Exception $exception) {
+            $output->writeln(
+                '<fg=red>Unable to create user ' . $input->getArgument('username') . '</fg=red>'
+            );
 
-            return;
+            return 1;
         }
 
         $output->writeln('<fg=green>User ' . $input->getArgument('username') . ' created</fg=green>');

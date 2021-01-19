@@ -6,38 +6,46 @@ use OAuth2\Storage\ScopeInterface;
 use OAuth2\ServerBundle\Manager\ScopeManagerInterface;
 use Doctrine\ORM\EntityManager;
 
+/**
+ * Class Scope
+ */
 class Scope implements ScopeInterface
 {
-    private $em;
+    /**
+     * @var EntityManager
+     */
+    private EntityManager $emn;
 
     /**
      * @var ScopeManagerInterface
      */
-    private $sm;
+    private ScopeManagerInterface $smn;
 
+    /**
+     * Scope constructor.
+     *
+     * @param EntityManager         $entityManager
+     * @param ScopeManagerInterface $scopeManager
+     */
     public function __construct(EntityManager $entityManager, ScopeManagerInterface $scopeManager)
     {
-        $this->em = $entityManager;
-        $this->sm = $scopeManager;
+        $this->emn = $entityManager;
+        $this->smn = $scopeManager;
     }
 
     /**
      * Check if the provided scope exists.
      *
-     * @param $scope
-     * A space-separated string of scopes.
-     * @param $client_id
-     * The requesting client.
+     * @param string      $scope    A space-separated string of scopes.
+     * @param string|null $clientId The requesting client.
      *
-     * @return
-     * TRUE if it exists, FALSE otherwise.
+     * @return bool TRUE if it exists, FALSE otherwise.
      */
-    public function scopeExists($scope, $client_id = null)
+    public function scopeExists($scope, $clientId = null): bool
     {
         $scopes = explode(' ', $scope);
-        if ($client_id) {
-            // Get Client
-            $client = $this->em->getRepository('OAuth2ServerBundle:Client')->find($client_id);
+        if ($clientId) {
+            $client = $this->emn->getRepository('OAuth2ServerBundle:Client')->find($clientId);
 
             if (!$client) {
                 return false;
@@ -54,9 +62,9 @@ class Scope implements ScopeInterface
             return true;
         }
 
-        $valid_scopes = $this->sm->findScopesByScopes($scopes);
+        $valid_scopes = $this->smn->findScopesByScopes($scopes);
 
-        return count($valid_scopes) == count($scopes);
+        return count($valid_scopes) === count($scopes);
     }
 
     /**
@@ -66,7 +74,9 @@ class Scope implements ScopeInterface
      * scope request by the client. By returning "null",
      * opt out of requiring scopes
      *
-     * @return
+     * @param string|null $clientId The requesting client.
+     *
+     * @return bool
      * string representation of default scope, null if
      * scopes are not defined, or false to force scope
      * request by the client
@@ -76,7 +86,7 @@ class Scope implements ScopeInterface
      * ex:
      *     null
      */
-    public function getDefaultScope($client_id = null)
+    public function getDefaultScope($clientId = null): bool
     {
         return false;
     }
@@ -85,13 +95,13 @@ class Scope implements ScopeInterface
      * Gets the description of a given scope key, if
      * available, otherwise the key is returned.
      *
-     * @return
-     * string description of the scope key.
+     * @param string $scope A space-separated string of scopes.
+     *
+     * @return string description of the scope key.
      */
-    public function getDescriptionForScope($scope)
+    public function getDescriptionForScope($scope): string
     {
-        // Get Scope
-        $scopeObject = $this->sm->findScopeByScope($scope);
+        $scopeObject = $this->smn->findScopeByScope($scope);
 
         if (!$scopeObject) {
             return $scope;

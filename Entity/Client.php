@@ -10,83 +10,91 @@ class Client
     /**
      * @var string
      */
-    private $client_id;
+    private string $clientId;
 
     /**
      * @var string
      */
-    private $client_secret;
+    private string $clientSecret;
 
     /**
      * @var array
      */
-    private $redirect_uri;
+    private array $redirectUri;
 
     /**
-     * @var \OAuth2\ServerBundle\Entity\ClientPublicKey $public_key
+     * @var array
      */
-    private $grant_types;
+    private array $grantTypes;
 
     /**
-     * @var string
+     * @var ?ClientPublicKey
      */
-    private $public_key;
+    private ?ClientPublicKey $publicKey;
 
     /**
-     * Set client_id
+     * @var array
+     */
+    private array $scopes;
+
+    /**
+     * Set clientId
      *
-     * @param  string $clientId
+     * @param string $clientId
+     *
      * @return Client
      */
-    public function setClientId($clientId)
+    public function setClientId(string $clientId): Client
     {
-        $this->client_id = $clientId;
+        $this->clientId = $clientId;
 
         return $this;
     }
 
     /**
-     * Get client_id
+     * Get clientId
      *
      * @return string
      */
-    public function getClientId()
+    public function getClientId(): string
     {
-        return $this->client_id;
+        return $this->clientId;
     }
 
     /**
-     * Set client_secret
+     * Set clientSecret
      *
-     * @param  string $clientSecret
+     * @param string $clientSecret
+     *
      * @return Client
      */
-    public function setClientSecret($clientSecret)
+    public function setClientSecret(string $clientSecret): Client
     {
-        $this->client_secret = $clientSecret;
+        $this->clientSecret = $clientSecret;
 
         return $this;
     }
 
     /**
-     * Get client_secret
+     * Get clientSecret
      *
      * @return string
      */
-    public function getClientSecret()
+    public function getClientSecret(): string
     {
-        return $this->client_secret;
+        return $this->clientSecret;
     }
 
     /**
-     * Set redirect_uri
+     * Set redirectUri
      *
-     * @param  array  $redirectUri
+     * @param array $redirectUri
+     *
      * @return Client
      */
-    public function setRedirectUri($redirectUri)
+    public function setRedirectUri(array $redirectUri): Client
     {
-        $this->redirect_uri = $redirectUri;
+        $this->redirectUri = $redirectUri;
 
         return $this;
     }
@@ -96,45 +104,43 @@ class Client
      *
      * @return array
      */
-    public function getRedirectUri()
+    public function getRedirectUri(): array
     {
-        return $this->redirect_uri;
+        return $this->redirectUri;
     }
 
     /**
      * Set grant_types
      *
-     * @param  array  $grantTypes
+     * @param array $grantTypes
+     *
      * @return Client
      */
-    public function setGrantTypes($grantTypes)
+    public function setGrantTypes(array $grantTypes): Client
     {
-        $this->grant_types = $grantTypes;
+        $this->grantTypes = $grantTypes;
 
         return $this;
     }
 
     /**
-     * Get grant_types
+     * Get grantTypes
      *
      * @return array
      */
-    public function getGrantTypes()
+    public function getGrantTypes(): array
     {
-        return $this->grant_types;
+        return $this->grantTypes;
     }
-    /**
-     * @var array
-     */
-    private $scopes;
 
     /**
      * Set scopes
      *
-     * @param  array  $scopes
+     * @param array $scopes
+     *
      * @return Client
      */
-    public function setScopes($scopes)
+    public function setScopes(array $scopes): Client
     {
         $this->scopes = $scopes;
 
@@ -146,7 +152,7 @@ class Client
      *
      * @return array
      */
-    public function getScopes()
+    public function getScopes(): array
     {
         return $this->scopes;
     }
@@ -154,12 +160,13 @@ class Client
     /**
      * Set public key
      *
-     * @param  \OAuth2\ServerBundle\Entity\ClientPublicKey $public_key
+     * @param ClientPublicKey|null $publicKey
+     *
      * @return Client
      */
-    public function setPublicKey(\OAuth2\ServerBundle\Entity\ClientPublicKey $public_key = null)
+    public function setPublicKey(?ClientPublicKey $publicKey = null): Client
     {
-        $this->public_key = $public_key;
+        $this->publicKey = $publicKey;
 
         return $this;
     }
@@ -167,10 +174,10 @@ class Client
     /**
      * Get public key
      *
-     * @return \OAuth2\ServerBundle\Entity\ClientPublicKey
+     * @return ClientPublicKey
      */
-    public function getPublicKey()
+    public function getPublicKey(): ?ClientPublicKey
     {
-        return $this->public_key;
+        return $this->publicKey;
     }
 }

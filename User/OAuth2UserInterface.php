@@ -4,6 +4,9 @@ namespace OAuth2\ServerBundle\User;
 
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * Interface OAuth2UserInterface
+ */
 interface OAuth2UserInterface extends UserInterface
 {
     /**
@@ -18,7 +21,7 @@ interface OAuth2UserInterface extends UserInterface
      * </code>
      *
      *
-     * @return The user scope
+     * @return string The user scope
      */
-    public function getScope();
+    public function getScope(): string;
 }

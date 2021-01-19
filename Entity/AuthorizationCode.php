@@ -2,6 +2,8 @@
 
 namespace OAuth2\ServerBundle\Entity;
 
+use DateTime;
+
 /**
  * AuthorizationCode
  */
@@ -10,45 +12,46 @@ class AuthorizationCode
     /**
      * @var string
      */
-    private $code;
+    private string $code;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
-    private $expires;
+    private DateTime $expires;
 
     /**
      * @var string
      */
-    private $user_id;
+    private string $userId;
 
     /**
      * @var array
      */
-    private $redirect_uri;
+    private array $redirectUri;
 
     /**
      * @var string
      */
-    private $scope;
+    private string $scope;
 
     /**
-     * @var \OAuth2\ServerBundle\Entity\Client
+     * @var ?Client
      */
-    private $client;
+    private ?Client $client;
 
     /**
      * @var string
      */
-    private $id_token;
+    private string $idToken;
 
     /**
      * Set code
      *
-     * @param  string            $code
+     * @param string $code
+     *
      * @return AuthorizationCode
      */
-    public function setCode($code)
+    public function setCode(string $code): AuthorizationCode
     {
         $this->code = $code;
 
@@ -60,7 +63,7 @@ class AuthorizationCode
      *
      * @return string
      */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->code;
     }
@@ -68,14 +71,14 @@ class AuthorizationCode
     /**
      * Set expires
      *
-     * @param  \DateTime|int $expires
+     * @param  DateTime|int $expires
+     *
      * @return AuthorizationCode
      */
-    public function setExpires($expires)
+    public function setExpires($expires): AuthorizationCode
     {
-        if (!$expires instanceof \DateTime) {
-            // @see https://github.com/bshaffer/oauth2-server-bundle/issues/24
-            $dateTime = new \DateTime();
+        if (!$expires instanceof DateTime) {
+            $dateTime = new DateTime();
             $dateTime->setTimestamp($expires);
             $expires = $dateTime;
         }
@@ -88,66 +91,69 @@ class AuthorizationCode
     /**
      * Get expires
      *
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getExpires()
+    public function getExpires(): DateTime
     {
         return $this->expires;
     }
 
     /**
-     * Set user_id
+     * Set userId
      *
-     * @param  string            $userId
+     * @param string $userId
+     *
      * @return AuthorizationCode
      */
-    public function setUserId($userId)
+    public function setUserId(string $userId): AuthorizationCode
     {
-        $this->user_id = $userId;
+        $this->userId = $userId;
 
         return $this;
     }
 
     /**
-     * Get user_id
+     * Get userId
      *
      * @return string
      */
-    public function getUserId()
+    public function getUserId(): string
     {
-        return $this->user_id;
+        return $this->userId;
     }
 
     /**
-     * Set redirect_uri
+     * Set redirectUri
      *
-     * @param  string            $redirectUri
+     * @param string $redirectUri
+     *
      * @return AuthorizationCode
      */
-    public function setRedirectUri($redirectUri)
+    public function setRedirectUri(string $redirectUri): AuthorizationCode
     {
-        $this->redirect_uri = explode(' ', $redirectUri);
+        $this->redirectUri = explode(' ', $redirectUri);
 
         return $this;
     }
 
     /**
-     * Get redirect_uri
+     * Get redirectUri
      *
      * @return array
      */
-    public function getRedirectUri()
+    public function getRedirectUri(): array
     {
-        return $this->redirect_uri;
+        return $this->redirectUri;
     }
 
     /**
      * Set scope
      *
-     * @param  string            $scope
+     * @param string $scope
+     *
      * @return AuthorizationCode
      */
-    public function setScope($scope)
+    public function setScope(string $scope): AuthorizationCode
     {
         $this->scope = $scope;
 
@@ -159,7 +165,7 @@ class AuthorizationCode
      *
      * @return string
      */
-    public function getScope()
+    public function getScope(): string
     {
         return $this->scope;
     }
@@ -167,10 +173,11 @@ class AuthorizationCode
     /**
      * Set client
      *
-     * @param  \OAuth2\ServerBundle\Entity\Client $client
+     * @param Client|null $client
+     *
      * @return AuthorizationCode
      */
-    public function setClient(\OAuth2\ServerBundle\Entity\Client $client = null)
+    public function setClient($client = null): AuthorizationCode
     {
         $this->client = $client;
 
@@ -180,26 +187,34 @@ class AuthorizationCode
     /**
      * Get client
      *
-     * @return \OAuth2\ServerBundle\Entity\Client
+     * @return ?Client
      */
-    public function getClient()
+    public function getClient(): ?Client
     {
         return $this->client;
     }
 
     /**
+     * Get idToken
+     *
      * @return string
      */
-    public function getIdToken()
+    public function getIdToken(): string
     {
-      return $this->id_token;
+      return $this->idToken;
     }
 
     /**
+     * Set idToken
+     *
      * @param string $idToken
+     *
+     * @return AuthorizationCode
      */
-    public function setIdToken($idToken)
+    public function setIdToken(string $idToken): AuthorizationCode
     {
-      $this->id_token = $idToken;
+        $this->idToken = $idToken;
+
+        return $this;
     }
 }

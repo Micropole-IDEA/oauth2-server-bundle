@@ -5,17 +5,21 @@ OAuth2\ServerBundle\Entity\RefreshToken:
         token:
             type:       string
             length:     40
+            column:     id
     fields:
-        user_id:
+        userId:
             type:       string
             length:     100
             nullable:   true
+            column:     user_id
         expires:
             type:       datetime
+            column:     expires
         scope:
             type:       string
             length:     255
             nullable:   true
+            column:     scope
     manyToOne:
       client:
         targetEntity: OAuth2\ServerBundle\Entity\Client

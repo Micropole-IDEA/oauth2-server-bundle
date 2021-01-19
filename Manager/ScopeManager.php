@@ -3,26 +3,42 @@
 namespace OAuth2\ServerBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use OAuth2\ServerBundle\Entity\Scope;
 
+/**
+ * Class ScopeManager
+ */
 class ScopeManager implements ScopeManagerInterface
 {
-    private $em;
+    /**
+     * @var EntityManager
+     */
+    private EntityManager $emn;
 
+    /**
+     * ScopeManager constructor.
+     *
+     * @param EntityManager $entityManager
+     */
     public function __construct(EntityManager $entityManager)
     {
-        $this->em = $entityManager;
+        $this->emn = $entityManager;
     }
 
     /**
-     * Creates a new scope
+     * createScope
      *
-     * @param string $scope
-     *
-     * @param string $description
+     * @param string      $scope
+     * @param string|null $description
      *
      * @return Scope
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
-    public function createScope($scope, $description = null)
+    public function createScope(string $scope, ?string $description = null): Scope
     {
         if ($scopeObject = $this->findScopeByScope($scope)) {
           return $scopeObject;
@@ -33,8 +49,8 @@ class ScopeManager implements ScopeManagerInterface
         $scopeObject->setDescription($description);
 
         // Store Scope
-        $this->em->persist($scopeObject);
-        $this->em->flush();
+        $this->emn->persist($scopeObject);
+        $this->emn->flush();
 
         return $scopeObject;
     }
@@ -42,30 +58,28 @@ class ScopeManager implements ScopeManagerInterface
     /**
      * Find a single scope by the scope
      *
-     * @param $scope
-     * @return Scope
+     * @param string $scope
+     *
+     * @return object
      */
-    public function findScopeByScope($scope)
+    public function findScopeByScope(string $scope): object
     {
-        $scopeObject = $this->em->getRepository('OAuth2ServerBundle:Scope')->find($scope);
-
-        return $scopeObject;
+        return $this->emn->getRepository('OAuth2ServerBundle:Scope')->find($scope);
     }
 
     /**
      * Find all the scopes by an array of scopes
      *
      * @param array $scopes
-     * @return mixed|void
+     *
+     * @return Scope[]
      */
-    public function findScopesByScopes(array $scopes)
+    public function findScopesByScopes(array $scopes): array
     {
-        $scopeObjects = $this->em->getRepository('OAuth2ServerBundle:Scope')
+        return $this->emn->getRepository('OAuth2ServerBundle:Scope')
             ->createQueryBuilder('a')
             ->where('a.scope in (?1)')
             ->setParameter(1, $scopes)
             ->getQuery()->getResult();
-
-        return $scopeObjects;
     }
 }

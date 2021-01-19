@@ -2,17 +2,29 @@
 
 namespace OAuth2\ServerBundle\Storage;
 
+use Doctrine\ORM\ORMException;
+use Exception;
 use OAuth2\Storage\AuthorizationCodeInterface;
 use Doctrine\ORM\EntityManager;
-use OAuth2\ServerBundle\Entity\Client;
 
+/**
+ * Class AuthorizationCode
+ */
 class AuthorizationCode implements AuthorizationCodeInterface
 {
-    private $em;
+    /**
+     * @var EntityManager
+     */
+    private EntityManager $emn;
 
+    /**
+     * AuthorizationCode constructor.
+     *
+     * @param EntityManager $EntityManager
+     */
     public function __construct(EntityManager $EntityManager)
     {
-        $this->em = $EntityManager;
+        $this->emn = $EntityManager;
     }
 
     /**
@@ -22,11 +34,10 @@ class AuthorizationCode implements AuthorizationCodeInterface
      *
      * Required for OAuth2::GRANT_TYPE_AUTH_CODE.
      *
-     * @param $code
-     * Authorization code to be check with.
+     * @param string $code Authorization code to be check with.
      *
-     * @return
-     * An associative array as below, and NULL if the code is invalid
+     * @return array|null An associative array as below, and NULL if the code is invalid
+     *
      * @code
      * return array(
      *     "client_id"    => CLIENT_ID,      // REQUIRED Stored client identifier
@@ -41,10 +52,10 @@ class AuthorizationCode implements AuthorizationCodeInterface
      *
      * @ingroup oauth2_section_4
      */
-    public function getAuthorizationCode($code)
+    public function getAuthorizationCode($code): ?array
     {
         // Get Code
-        $code = $this->em->getRepository('OAuth2ServerBundle:AuthorizationCode')->find($code);
+        $code = $this->emn->getRepository('OAuth2ServerBundle:AuthorizationCode')->find($code);
 
         if (!$code) {
             return null;
@@ -70,37 +81,35 @@ class AuthorizationCode implements AuthorizationCodeInterface
      *
      * Required for OAuth2::GRANT_TYPE_AUTH_CODE.
      *
-     * @param $code
-     * Authorization code to be stored.
-     * @param $client_id
-     * Client identifier to be stored.
-     * @param $user_id
-     * User identifier to be stored.
-     * @param string $redirect_uri
-     *                             Redirect URI(s) to be stored in a space-separated string.
-     * @param int    $expires
-     *                             Expiration to be stored as a Unix timestamp.
-     * @param string $scope
-     *                             (optional) Scopes to be stored in space-separated string.
+     * @param string      $code        Authorization code to be stored.
+     * @param string      $clientId    Client identifier to be stored.
+     * @param string      $userId      User identifier to be stored.
+     * @param string      $redirectUri Redirect URI(s) to be stored in a space-separated string.
+     * @param int         $expires     Expiration to be stored as a Unix timestamp.
+     * @param string|null $scope       (optional) Scopes to be stored in space-separated string.
+     *
+     * @throws Exception
      *
      * @ingroup oauth2_section_4
      */
-    public function setAuthorizationCode($code, $client_id, $user_id, $redirect_uri, $expires, $scope = null)
+    public function setAuthorizationCode($code, $clientId, $userId, $redirectUri, $expires, $scope = null)
     {
-        $client = $this->em->getRepository('OAuth2ServerBundle:Client')->find($client_id);
+        $client = $this->emn->getRepository('OAuth2ServerBundle:Client')->find($clientId);
 
-        if (!$client) throw new \Exception('Unknown client identifier');
+        if (!$client) {
+            throw new Exception('Unknown client identifier');
+        }
 
         $authorizationCode = new \OAuth2\ServerBundle\Entity\AuthorizationCode();
         $authorizationCode->setCode($code);
         $authorizationCode->setClient($client);
-        $authorizationCode->setUserId($user_id);
-        $authorizationCode->setRedirectUri($redirect_uri);
+        $authorizationCode->setUserId($userId);
+        $authorizationCode->setRedirectUri($redirectUri);
         $authorizationCode->setExpires($expires);
         $authorizationCode->setScope($scope);
 
-        $this->em->persist($authorizationCode);
-        $this->em->flush();
+        $this->emn->persist($authorizationCode);
+        $this->emn->flush();
     }
 
     /**
@@ -114,11 +123,14 @@ class AuthorizationCode implements AuthorizationCodeInterface
      *    revoke (when possible) all tokens previously issued based on
      *    that authorization code
      *
+     * @param string $code
+     *
+     * @throws ORMException
      */
     public function expireAuthorizationCode($code)
     {
-        $code = $this->em->getRepository('OAuth2ServerBundle:AuthorizationCode')->find($code);
-        $this->em->remove($code);
-        $this->em->flush();
+        $code = $this->emn->getRepository('OAuth2ServerBundle:AuthorizationCode')->find($code);
+        $this->emn->remove($code);
+        $this->emn->flush();
     }
 }

@@ -12,35 +12,36 @@ class User implements OAuth2UserInterface
     /**
      * @var string
      */
-    private $username;
+    private string $username;
 
     /**
      * @var string
      */
-    private $password;
+    private string $password;
 
     /**
      * @var string
      */
-    private $salt;
+    private string $salt;
 
     /**
      * @var array
      */
-    private $roles;
+    private array $roles;
 
     /**
      * @var array
      */
-    private $scopes;
+    private array $scopes;
 
     /**
      * Set username
      *
-     * @param  string $username
+     * @param string $username
+     *
      * @return User
      */
-    public function setUsername($username)
+    public function setUsername(string $username): User
     {
         $this->username = $username;
 
@@ -52,7 +53,7 @@ class User implements OAuth2UserInterface
      *
      * @return string
      */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }
@@ -60,10 +61,11 @@ class User implements OAuth2UserInterface
     /**
      * Set password
      *
-     * @param  string $password
+     * @param string $password
+     *
      * @return User
      */
-    public function setPassword($password)
+    public function setPassword(string $password): User
     {
         $this->password = $password;
 
@@ -75,7 +77,7 @@ class User implements OAuth2UserInterface
      *
      * @return string
      */
-    public function getPassword()
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -83,10 +85,11 @@ class User implements OAuth2UserInterface
     /**
      * Set salt
      *
-     * @param  string $salt
+     * @param string $salt
+     *
      * @return User
      */
-    public function setSalt($salt)
+    public function setSalt(string $salt): User
     {
         $this->salt = $salt;
 
@@ -98,7 +101,7 @@ class User implements OAuth2UserInterface
      *
      * @return string
      */
-    public function getSalt()
+    public function getSalt(): string
     {
         return $this->salt;
     }
@@ -106,10 +109,11 @@ class User implements OAuth2UserInterface
     /**
      * Set roles
      *
-     * @param  array $roles
+     * @param array $roles
+     *
      * @return User
      */
-    public function setRoles($roles)
+    public function setRoles(array $roles): User
     {
         $this->roles = $roles;
 
@@ -121,7 +125,7 @@ class User implements OAuth2UserInterface
      *
      * @return array
      */
-    public function getRoles()
+    public function getRoles(): array
     {
         return $this->roles;
     }
@@ -129,10 +133,11 @@ class User implements OAuth2UserInterface
     /**
      * Set scopes
      *
-     * @param  array $scopes
+     * @param array $scopes
+     *
      * @return User
      */
-    public function setScopes($scopes)
+    public function setScopes(array $scopes): User
     {
         $this->scopes = $scopes;
 
@@ -144,7 +149,7 @@ class User implements OAuth2UserInterface
      *
      * @return array
      */
-    public function getScopes()
+    public function getScopes(): array
     {
         return $this->scopes;
     }
@@ -154,7 +159,7 @@ class User implements OAuth2UserInterface
      *
      * @return string
      */
-    public function getScope()
+    public function getScope(): string
     {
         return implode(' ', $this->getScopes());
     }

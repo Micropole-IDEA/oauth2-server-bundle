@@ -2,27 +2,47 @@
 
 namespace OAuth2\ServerBundle\Tests\Entity;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use OAuth2\ServerBundle\Manager\ScopeManager;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
+use PHPUnit_Framework_TestCase;
 
-class ScopeManagerTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class ScopeManagerTest
+ */
+class ScopeManagerTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * testFindScopesByScopes
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
     public function testFindScopesByScopes()
     {
-        $container = ContainerLoader::buildTestContainer();
-        $em = $container->get('doctrine.orm.entity_manager');
+        try {
+            $container = ContainerLoader::buildTestContainer();
+            /**
+             * @var EntityManager $emn
+             */
+            $emn = $container->get('doctrine.orm.entity_manager');
 
-        $manager = new ScopeManager($em);
+            $manager = new ScopeManager($emn);
 
-        $scopes = array('test-scope-'.rand(), 'test-scope-'.rand(), 'test-scope-'.rand());
+            $scopes = array('test-scope-' . rand(), 'test-scope-' . rand(), 'test-scope-' . rand());
 
-        foreach ($scopes as $scope) {
-            $manager->createScope($scope, $scope);
+            foreach ($scopes as $scope) {
+                $manager->createScope($scope, $scope);
+            }
+
+            $dbScopes = $manager->findScopesByScopes($scopes);
+
+            $this->assertNotNull($dbScopes);
+            $this->assertEquals(count($dbScopes), count($scopes));
+        } catch (\Exception $exception) {
+            throw $exception;
         }
-
-        $dbScopes = $manager->findScopesByScopes($scopes);
-
-        $this->assertNotNull($dbScopes);
-        $this->assertEquals(count($dbScopes), count($scopes));
     }
 }

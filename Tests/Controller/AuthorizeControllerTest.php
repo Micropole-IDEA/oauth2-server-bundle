@@ -3,53 +3,72 @@
 namespace OAuth2\ServerBundle\Tests\Controller;
 
 use OAuth2\HttpFoundationBridge\Request;
+use OAuth2\ServerBundle\Manager\ClientManager;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Controller\AuthorizeController;
+use PHPUnit_Framework_TestCase;
+use Twig_Environment;
+use Twig_Loader_Filesystem;
 
-class AuthorizeControllerTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class AuthorizeControllerTest
+ */
+class AuthorizeControllerTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * testOpenIdConfig
+     *
+     * @throws \Exception
+     */
     public function testOpenIdConfig()
     {
-        $container = ContainerLoader::buildTestContainer(array(
-            __DIR__.'/../../vendor/symfony/symfony/src/Symfony/Bundle/SecurityBundle/Resources/config/security.xml',
-        ));
-        $controller = new AuthorizeController();
-        $controller->setContainer($container);
+        try {
+            $container = ContainerLoader::buildTestContainer(
+                array(
+                    __DIR__
+                    . '/../../vendor/symfony/symfony/src/Symfony/Bundle/SecurityBundle/Resources/config/security.xml',
+                )
+            );
+            $controller = $container->get(AuthorizeController::class);
+            $clientManager = $container->get(ClientManager::class);
 
-        $clientManager = $container->get('oauth2.client_manager');
+            $clientId = 'test-client-' . rand();
+            $redirectUri = 'http://brentertainment.com';
+            $scope = 'openid';
 
-        $clientId = 'test-client-' . rand();
-        $redirectUri = 'http://brentertainment.com';
-        $scope  = 'openid';
+            $clientManager->createClient(
+                $clientId,
+                explode(',', $redirectUri),
+                array(),
+                explode(',', $scope)
+            );
 
-        $clientManager->createClient(
-          $clientId,
-          explode(',', $redirectUri),
-          array(),
-          explode(',', $scope)
-        );
+            $request = new Request(
+                array(
+                   'client_id'     => $clientId,
+                   'response_type' => 'code',
+                   'scope'         => 'openid',
+                   'state'         => 'xyz',
+                   'foo'           => 'bar',
+                   'nonce'         => '123',
+                )
+            );
+            $container->set(Request::class, $request);
 
-        $request = new Request(array(
-            'client_id'     => $clientId,
-            'response_type' => 'code',
-            'scope'         => 'openid',
-            'state'         => 'xyz',
-            'foo'           => 'bar',
-            'nonce'         => '123',
-        ));
-        $container->set('oauth2.request', $request);
+            $params = $controller->validateAuthorizeAction();
 
-        $params = $controller->validateAuthorizeAction();
+            $this->assertArrayHasKey('nonce', $params['qs'], 'optional included param');
+            $this->assertArrayNotHasKey('foo', $params['qs'], 'invalid included param');
+            $this->assertArrayNotHasKey('redirect_uri', $params['qs'], 'optional excluded param');
 
-        $this->assertArrayHasKey('nonce', $params['qs'], 'optional included param');
-        $this->assertArrayNotHasKey('foo', $params['qs'], 'invalid included param');
-        $this->assertArrayNotHasKey('redirect_uri', $params['qs'], 'optional excluded param');
+            $loader = new Twig_Loader_Filesystem(__DIR__ . '/../../Resources/views');
+            $twig = new Twig_Environment($loader);
+            $template = $twig->loadTemplate('Authorize/authorize.html.twig');
+            $html = $template->render($params);
 
-        $loader = new \Twig_Loader_Filesystem(__DIR__.'/../../Resources/views');
-        $twig = new \Twig_Environment($loader);
-        $template = $twig->loadTemplate('Authorize/authorize.html.twig');
-        $html = $template->render($params);
-
-        $this->assertContains(htmlentities(http_build_query($params['qs'])), $html);
+            $this->assertContains(htmlentities(http_build_query($params['qs'])), $html);
+        } catch (\Exception $exception) {
+            throw $exception;
+        }
     }
 }

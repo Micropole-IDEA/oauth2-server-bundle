@@ -2,48 +2,98 @@
 
 namespace OAuth2\ServerBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Exception;
+use OAuth2\ServerBundle\Exception\ScopeNotFoundException;
+use OAuth2\ServerBundle\Manager\ClientManager;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CreateClientCommand extends ContainerAwareCommand
+/**
+ * Class CreateClientCommand
+ */
+class CreateClientCommand extends Command
 {
+    /**
+     * @var ClientManager
+     */
+    protected ClientManager $clientManager;
+
+    /**
+     * CreateClientCommand constructor.
+     *
+     * @param ClientManager $clientManager
+     * @param string|null   $name
+     */
+    public function __construct(ClientManager $clientManager, ?string $name = null)
+    {
+        parent::__construct($name);
+        $this->clientManager = $clientManager;
+    }
+
+    /**
+     * configure
+     */
     protected function configure()
     {
         $this
             ->setName('OAuth2:CreateClient')
             ->setDescription('Create a OAuth2 client')
             ->addArgument('identifier', InputArgument::REQUIRED, 'The client identifier')
-            ->addArgument('redirect_uri', InputArgument::REQUIRED, 'The client redirect uris (comma separated)')
-            ->addArgument('grant_types', InputArgument::OPTIONAL, 'Grant types to restrict the client to (comma separated)')
-            ->addArgument('scopes', InputArgument::OPTIONAL, 'Scopes to restrict the client to (comma separated)')
-        ;
+            ->addArgument(
+                'redirect_uri',
+                InputArgument::REQUIRED,
+                'The client redirect uris (comma separated)'
+            )
+            ->addArgument(
+                'grant_types',
+                InputArgument::OPTIONAL,
+                'Grant types to restrict the client to (comma separated)'
+            )
+            ->addArgument(
+                'scopes',
+                InputArgument::OPTIONAL,
+                'Scopes to restrict the client to (comma separated)'
+            );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * execute
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $container = $this->getContainer();
-        $clientManager = $container->get('oauth2.client_manager');
-
         try {
-            $client = $clientManager->createClient(
+            $client = $this->clientManager->createClient(
                 $input->getArgument('identifier'),
                 explode(',', $input->getArgument('redirect_uri')),
                 explode(',', $input->getArgument('grant_types')),
                 explode(',', $input->getArgument('scopes'))
             );
-        } catch (\Doctrine\DBAL\DBALException $e) {
-            $output->writeln('<fg=red>Unable to create client ' . $input->getArgument('identifier') . '</fg=red>');
-            $output->writeln('<fg=red>' . $e->getMessage() . '</fg=red>');
+        } catch (ScopeNotFoundException $exception) {
+                $output->writeln('<fg=red>Scope not found, please create it first</fg=red>');
 
-            return 1;
-        } catch (\OAuth2\ServerBundle\Exception\ScopeNotFoundException $e) {
-            $output->writeln('<fg=red>Scope not found, please create it first</fg=red>');
+                return 1;
+        } catch (Exception $exception) {
+            $output->writeln(
+                '<fg=red>Unable to create client ' . $input->getArgument('identifier') . '</fg=red>'
+            );
+            $output->writeln('<fg=red>' . $exception->getMessage() . '</fg=red>');
 
             return 1;
         }
 
-        $output->writeln('<fg=green>Client ' . $input->getArgument('identifier') . ' created with secret ' . $client->getClientSecret() . '</fg=green>');
+        $output->writeln(
+            '<fg=green>Client '
+            . $input->getArgument('identifier')
+            . ' created with secret '
+            . $client->getClientSecret()
+            . '</fg=green>'
+        );
     }
 }

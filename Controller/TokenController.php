@@ -2,29 +2,100 @@
 
 namespace OAuth2\ServerBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use OAuth2\GrantType\AuthorizationCode;
+use OAuth2\GrantType\ClientCredentials;
+use OAuth2\GrantType\RefreshToken;
+use OAuth2\GrantType\UserCredentials;
+use OAuth2\HttpFoundationBridge\Response;
+use OAuth2\ResponseInterface;
+use OAuth2\Server;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use OAuth2\HttpFoundationBridge\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class TokenController extends Controller
+/**
+ * TokenController
+ */
+class TokenController extends AbstractController
 {
     /**
-     * This is called by the client app once the client has obtained
-     * an authorization code from the Authorize Controller (@see OAuth2\ServerBundle\Controller\AuthorizeController).
-     * returns a JSON-encoded Access Token or a JSON object with
-     * "error" and "error_description" properties.
+     * @var Server
+     */
+    protected Server $server;
+
+    /**
+     * @var ClientCredentials
+     */
+    protected ClientCredentials $clientCredential;
+
+    /**
+     * @var AuthorizationCode;
+     */
+    protected AuthorizationCode $authorizationCode;
+
+    /**
+     * @var RefreshToken
+     */
+    protected RefreshToken $refreshToken;
+
+    /**
+     * @var UserCredentials
+     */
+    protected UserCredentials $userCredentials;
+
+    /**
+     * @var Request
+     */
+    protected Request $request;
+
+    /**
+     * @var Response
+     */
+    protected Response $response;
+
+    /**
+     * TokenController constructor.
+     *
+     * @param Server            $server
+     * @param AuthorizationCode $authorizationCode
+     * @param RefreshToken      $refreshToken
+     * @param UserCredentials   $userCredentials
+     * @param ClientCredentials $clientCredential
+     * @param Request           $request
+     * @param Response          $response
+     */
+    public function __construct(
+        Server $server,
+        AuthorizationCode $authorizationCode,
+        RefreshToken $refreshToken,
+        UserCredentials $userCredentials,
+        ClientCredentials $clientCredential,
+        Request $request,
+        Response $response
+    ) {
+        $this->server = $server;
+        $this->authorizationCode = $authorizationCode;
+        $this->refreshToken = $refreshToken;
+        $this->userCredentials = $userCredentials;
+        $this->clientCredential = $clientCredential;
+        $this->request = $request;
+        $this->response = $response;
+    }
+
+    /**
+     * tokenAction
+     *
+     * @return ResponseInterface
      *
      * @Route("/token", name="_token")
      */
-    public function tokenAction()
+    public function tokenAction(): ResponseInterface
     {
-        $server = $this->get('oauth2.server');
+        $this->server->addGrantType($this->clientCredential);
+        $this->server->addGrantType($this->authorizationCode);
+        $this->server->addGrantType($this->refreshToken);
+        $this->server->addGrantType($this->userCredentials);
 
-        // Add Grant Types
-        $server->addGrantType($this->get('oauth2.grant_type.client_credentials'));
-        $server->addGrantType($this->get('oauth2.grant_type.authorization_code'));
-        $server->addGrantType($this->get('oauth2.grant_type.refresh_token'));
-        $server->addGrantType($this->get('oauth2.grant_type.user_credentials'));
-
-        return $server->handleTokenRequest($this->get('oauth2.request'), $this->get('oauth2.response'));
+        return $this->server->handleTokenRequest($this->request, $this->response);
     }
 }

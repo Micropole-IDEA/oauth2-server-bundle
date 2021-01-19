@@ -8,32 +8,26 @@ namespace OAuth2\ServerBundle\Entity;
 class ClientPublicKey
 {
     /**
-     * @var \OAuth2\ServerBundle\Entity\Client
+     * @var ?Client
      */
-    private $client;
-
-    /**
-     * @var integer
-     */
-    private $client_id;
+    private ?Client $client;
 
     /**
      * @var string
      */
-    private $public_key;
+    private string $publicKey;
 
     /**
      * Set client
      *
-     * @param  \OAuth2\ServerBundle\Entity\Client $client
+     * @param ?Client $client
+     *
      * @return ClientPublicKey
      */
-    public function setClient(\OAuth2\ServerBundle\Entity\Client $client = null)
+    public function setClient(?Client $client = null): ClientPublicKey
     {
         $this->client = $client;
-
-        // this is necessary as the client_id is the primary key
-        $this->client_id = $client->getClientId();
+        $clientId = $client->getClientId();
 
         return $this;
     }
@@ -41,9 +35,9 @@ class ClientPublicKey
     /**
      * Get client
      *
-     * @return \OAuth2\ServerBundle\Entity\Client
+     * @return Client|null
      */
-    public function getClient()
+    public function getClient(): ?Client
     {
         return $this->client;
     }
@@ -51,12 +45,13 @@ class ClientPublicKey
     /**
      * Set public key
      *
-     * @param  string  $public_key
-     * @return Client
+     * @param string $publicKey
+     *
+     * @return ClientPublicKey
      */
-    public function setPublicKey($public_key)
+    public function setPublicKey(string $publicKey): ClientPublicKey
     {
-        $this->public_key = $public_key;
+        $this->publicKey = $publicKey;
 
         return $this;
     }
@@ -66,8 +61,8 @@ class ClientPublicKey
      *
      * @return string
      */
-    public function getPublicKey()
+    public function getPublicKey(): string
     {
-        return $this->public_key;
+        return $this->publicKey;
     }
 }

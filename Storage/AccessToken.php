@@ -2,17 +2,30 @@
 
 namespace OAuth2\ServerBundle\Storage;
 
+use Doctrine\ORM\ORMException;
 use OAuth2\Storage\AccessTokenInterface;
 use Doctrine\ORM\EntityManager;
 use OAuth2\ServerBundle\Entity\Client;
+use OAuth2\ServerBundle\Entity\AccessToken as EntityAccessToken;
 
+/**
+ * Class AccessToken
+ */
 class AccessToken implements AccessTokenInterface
 {
-    private $em;
+    /**
+     * @var EntityManager
+     */
+    private EntityManager $emn;
 
+    /**
+     * AccessToken constructor.
+     *
+     * @param EntityManager $EntityManager
+     */
     public function __construct(EntityManager $EntityManager)
     {
-        $this->em = $EntityManager;
+        $this->emn = $EntityManager;
     }
 
     /**
@@ -20,27 +33,23 @@ class AccessToken implements AccessTokenInterface
      *
      * We need to retrieve access token data as we create and verify tokens.
      *
-     * @param $oauth_token
-     * oauth_token to be check with.
+     * @param string $oauthToken oauth_token to be check with.
      *
-     * @return
-     * An associative array as below, and return NULL if the supplied oauth_token
-     * is invalid:
+     * @return array|null An associative array as below, and return NULL if the supplied oauth_token is invalid:
      * - client_id: Stored client identifier.
      * - expires: Stored expiration in unix timestamp.
      * - scope: (optional) Stored scope values in space-separated string.
      *
      * @ingroup oauth2_section_7
      */
-    public function getAccessToken($oauth_token)
+    public function getAccessToken($oauthToken): ?array
     {
-        $accessToken = $this->em->getRepository('OAuth2ServerBundle:AccessToken')->find($oauth_token);
+        $accessToken = $this->emn->getRepository('OAuth2ServerBundle:AccessToken')->find($oauthToken);
 
         if (!$accessToken) {
             return null;
         }
 
-        // Get Client
         $client = $accessToken->getClient();
 
         return array(
@@ -56,38 +65,39 @@ class AccessToken implements AccessTokenInterface
      *
      * We need to store access token data as we create and verify tokens.
      *
-     * @param $oauth_token
-     * oauth_token to be stored.
-     * @param $client_id
-     * Client identifier to be stored.
-     * @param $user_id
-     * User identifier to be stored.
-     * @param int    $expires
-     *                        Expiration to be stored as a Unix timestamp.
-     * @param string $scope
-     *                        (optional) Scopes to be stored in space-separated string.
+     * @param string      $oauthToken oauth_token to be stored.
+     * @param string      $clientId Client identifier to be stored.
+     * @param string      $userId User identifier to be stored.
+     * @param int         $expires Expiration to be stored as a Unix timestamp.
+     * @param string|null $scope (optional) Scopes to be stored in space-separated string.
+     *
+     * @return null
+     *
+     * @throws ORMException
      *
      * @ingroup oauth2_section_4
      */
-    public function setAccessToken($oauth_token, $client_id, $user_id, $expires, $scope = null)
+    public function setAccessToken($oauthToken, $clientId, $userId, $expires, $scope = null)
     {
-        // Get Client Entity
-        $client = $this->em->getRepository('OAuth2ServerBundle:Client')->find($client_id);
+        /**
+         * @var Client $client
+         */
+        $client = $this->emn->getRepository('OAuth2ServerBundle:Client')->find($clientId);
 
         if (!$client) {
             return null;
         }
 
         // Create Access Token
-        $accessToken = new \OAuth2\ServerBundle\Entity\AccessToken();
-        $accessToken->setToken($oauth_token);
+        $accessToken = new EntityAccessToken();
+        $accessToken->setToken($oauthToken);
         $accessToken->setClient($client);
-        $accessToken->setUserId($user_id);
+        $accessToken->setUserId($userId);
         $accessToken->setExpires($expires);
         $accessToken->setScope($scope);
 
         // Store Access Token
-        $this->em->persist($accessToken);
-        $this->em->flush();
+        $this->emn->persist($accessToken);
+        $this->emn->flush();
     }
 }

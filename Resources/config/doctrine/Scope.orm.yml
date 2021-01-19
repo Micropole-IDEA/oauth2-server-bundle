@@ -5,8 +5,10 @@ OAuth2\ServerBundle\Entity\Scope:
         scope:
             type:       string
             length:     255
+            column:     id
     fields:
         description:
             type:       string
             length:     255
+            column:     field
     lifecycleCallbacks: {  }

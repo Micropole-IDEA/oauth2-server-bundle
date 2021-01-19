@@ -2,27 +2,42 @@
 
 namespace OAuth2\ServerBundle\Tests\Entity;
 
+use Exception;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Entity\Scope;
+use PHPUnit_Framework_TestCase;
 
-class ScopeTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class ScopeTest
+ */
+class ScopeTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * testCreate
+     *
+     * @throws Exception
+     */
     public function testCreate()
     {
-        $container = ContainerLoader::buildTestContainer();
-        $em = $container->get('doctrine.orm.entity_manager');
+        try {
+            $container = ContainerLoader::buildTestContainer();
+            $emn = $container->get('doctrine.orm.entity_manager');
 
-        $scope = new Scope();
-        $scope->setScope($name = 'test-scope-'.rand());
-        $scope->setDescription('A Scope for Testing');
+            $scope = new Scope();
+            $name = 'test-scope-' . rand();
+            $scope->setScope($name);
+            $scope->setDescription('A Scope for Testing');
 
-        $em->persist($scope);
-        $em->flush();
+            $emn->persist($scope);
+            $emn->flush();
 
-        $stored = $em->find('OAuth2\ServerBundle\Entity\Scope', array('scope' => $name));
+            $stored = $emn->find('OAuth2\ServerBundle\Entity\Scope', array('scope' => $name));
 
-        $this->assertNotNull($stored);
-        $this->assertEquals($name, $stored->getScope());
-        $this->assertEquals($scope->getDescription(), $stored->getDescription());
+            $this->assertNotNull($stored);
+            $this->assertEquals($name, $stored->getScope());
+            $this->assertEquals($scope->getDescription(), $stored->getDescription());
+        } catch (Exception $exception) {
+            throw $exception;
+        }
     }
 }
