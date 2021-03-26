@@ -41,6 +41,7 @@ class ScopeManager implements ScopeManagerInterface
     public function createScope(string $scope, ?string $description = null): Scope
     {
         if ($scopeObject = $this->findScopeByScope($scope)) {
+
           return $scopeObject;
         }
 
@@ -60,9 +61,9 @@ class ScopeManager implements ScopeManagerInterface
      *
      * @param string $scope
      *
-     * @return object
+     * @return object|null
      */
-    public function findScopeByScope(string $scope): object
+    public function findScopeByScope(string $scope): ?object
     {
         return $this->emn->getRepository('OAuth2ServerBundle:Scope')->find($scope);
     }

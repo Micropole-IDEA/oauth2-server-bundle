@@ -18,6 +18,11 @@ class ClientPublicKey
     private string $publicKey;
 
     /**
+     * @var string
+     */
+    private string $clientId;
+
+    /**
      * Set client
      *
      * @param ?Client $client
@@ -27,7 +32,7 @@ class ClientPublicKey
     public function setClient(?Client $client = null): ClientPublicKey
     {
         $this->client = $client;
-        $clientId = $client->getClientId();
+        $this->clientId = $client->getClientId();
 
         return $this;
     }

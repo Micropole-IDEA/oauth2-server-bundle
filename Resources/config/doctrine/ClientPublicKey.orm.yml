@@ -2,10 +2,10 @@ OAuth2\ServerBundle\Entity\ClientPublicKey:
     type: entity
     table: oauth_client_public_key
     id:
-        client_id:
+        clientId:
             type:       string
             length:     50
-            column:     id
+            column:     client_id
     fields:
         publicKey:
             type:       text

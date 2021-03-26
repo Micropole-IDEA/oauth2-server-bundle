@@ -5,7 +5,7 @@ OAuth2\ServerBundle\Entity\AccessToken:
         token:
             type:       string
             length:     40
-            column:     id
+            column:     token
     fields:
         userId:
             type:       string

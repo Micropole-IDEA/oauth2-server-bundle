@@ -2,10 +2,10 @@ OAuth2\ServerBundle\Entity\Client:
     type: entity
     table: oauth_client
     id:
-        client_id:
+        clientId:
             type:       string
             length:     50
-            column:     id
+            column:     client_id
     fields:
         clientSecret:
             type:       string

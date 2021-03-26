@@ -5,7 +5,7 @@ OAuth2\ServerBundle\Entity\AuthorizationCode:
         code:
             type:       string
             length:     40
-            column:     id
+            column:     code
     fields:
         expires:
             type:       datetime

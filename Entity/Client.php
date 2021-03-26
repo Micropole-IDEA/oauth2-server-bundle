@@ -30,7 +30,7 @@ class Client
     /**
      * @var ?ClientPublicKey
      */
-    private ?ClientPublicKey $publicKey;
+    private ?ClientPublicKey $publicKey = null;
 
     /**
      * @var array

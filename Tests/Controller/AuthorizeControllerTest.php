@@ -7,8 +7,8 @@ use OAuth2\ServerBundle\Manager\ClientManager;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Controller\AuthorizeController;
 use PHPUnit_Framework_TestCase;
-use Twig_Environment;
-use Twig_Loader_Filesystem;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * Class AuthorizeControllerTest
@@ -61,9 +61,9 @@ class AuthorizeControllerTest extends PHPUnit_Framework_TestCase
             $this->assertArrayNotHasKey('foo', $params['qs'], 'invalid included param');
             $this->assertArrayNotHasKey('redirect_uri', $params['qs'], 'optional excluded param');
 
-            $loader = new Twig_Loader_Filesystem(__DIR__ . '/../../Resources/views');
-            $twig = new Twig_Environment($loader);
-            $template = $twig->loadTemplate('Authorize/authorize.html.twig');
+            $loader = new FilesystemLoader(__DIR__ . '/../../Resources/views');
+            $twig = new Environment($loader);
+            $template = $twig->load('Authorize/authorize.html.twig');
             $html = $template->render($params);
 
             $this->assertContains(htmlentities(http_build_query($params['qs'])), $html);

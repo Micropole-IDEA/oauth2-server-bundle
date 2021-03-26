@@ -11,15 +11,17 @@
             "email": "bshafs@gmail.com"
         }
     ],
-    "minimum-stability":"dev",
+    "minimum-stability":"stable",
     "require": {
         "php": ">=7.4",
         "bshaffer/oauth2-server-php": ">=1.0",
-        "bshaffer/oauth2-server-httpfoundation-bridge": "^1.2",
-        "sensio/framework-extra-bundle": "5.6.x-dev"
+        "micropole-idea/oauth2-server-httpfoundation-bridge": "^1.5.0",
+        "symfony/console": "4.4.*",
+        "symfony/security-bundle": "4.4.*",
+        "sensio/framework-extra-bundle": "^5.6",
+        "twig/twig": "^3.3"
     },
     "require-dev": {
-        "symfony/symfony": "^3|^4",
         "doctrine/orm": "~2.4,>=2.4.5",
         "ext-openssl": "*"
     },

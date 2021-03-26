@@ -12,27 +12,27 @@ abstract class AbstractToken
     /**
      * @var string
      */
-    private string $token;
+    protected string $token;
 
     /**
-     * @var string
+     * @var ?string
      */
-    private string $userId;
+    protected ?string $userId;
 
     /**
      * @var DateTime
      */
-    private DateTime $expires;
+    protected DateTime $expires;
 
     /**
      * @var string
      */
-    private string $scope;
+    protected string $scope;
 
     /**
      * @var ?Client
      */
-    private ?Client $client;
+    protected ?Client $client;
 
     /**
      * Set token
@@ -61,11 +61,11 @@ abstract class AbstractToken
     /**
      * Set userId
      *
-     * @param string $userId
+     * @param ?string $userId
      *
      * @return AbstractToken
      */
-    public function setUserId(string $userId): AbstractToken
+    public function setUserId(?string $userId): AbstractToken
     {
         $this->userId = $userId;
 
@@ -75,9 +75,9 @@ abstract class AbstractToken
     /**
      * Get userId
      *
-     * @return string
+     * @return ?string
      */
-    public function getUserId(): string
+    public function getUserId(): ?string
     {
         return $this->userId;
     }

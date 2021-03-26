@@ -24,9 +24,9 @@ interface ScopeManagerInterface
      *
      * @param string $scope
      *
-     * @return object
+     * @return object|null
      */
-    public function findScopeByScope(string $scope): object;
+    public function findScopeByScope(string $scope): ?object;
 
     /**
      * Find all the scopes by an array of scopes

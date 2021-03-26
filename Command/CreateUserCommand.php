@@ -3,7 +3,7 @@
 namespace OAuth2\ServerBundle\Command;
 
 use Exception;
-use OAuth2\ServerBundle\User\OAuth2UserInterface;
+use OAuth2\ServerBundle\User\OAuth2UserProvider;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,17 +15,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CreateUserCommand extends Command
 {
     /**
-     * @var OAuth2UserInterface
+     * @var OAuth2UserProvider
      */
-    protected OAuth2UserInterface $userProvider;
+    protected OAuth2UserProvider $userProvider;
 
     /**
      * CreateUserCommand constructor.
      *
-     * @param OAuth2UserInterface $userProvider
-     * @param string|null         $name
+     * @param OAuth2UserProvider $userProvider
+     * @param string|null        $name
      */
-    public function __construct(OAuth2UserInterface $userProvider, ?string $name = null)
+    public function __construct(OAuth2UserProvider $userProvider, ?string $name = null)
     {
         parent::__construct($name);
         $this->userProvider = $userProvider;
