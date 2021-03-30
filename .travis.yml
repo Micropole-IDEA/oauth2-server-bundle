@@ -4,6 +4,8 @@ os:
 dist: bionic
 php:
   - 7.4
+services:
+  - mysql
 env:
   - CONTAINER_CONFIG=Tests/Resources/config/services.xml
 before_script:
