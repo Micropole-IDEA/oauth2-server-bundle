@@ -16,4 +16,4 @@ before_script:
   - php vendor/doctrine/orm/bin/doctrine orm:schema-tool:update --force
 
 script:
-  - phpunit
+  - ./vendor/phpunit/phpunit/phpunit
