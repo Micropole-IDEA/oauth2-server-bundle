@@ -63,7 +63,7 @@ class AuthorizeController extends AbstractController
      *
      * @Route("/authorize", name="_authorize_validate", methods={"GET"})
      *
-     * @Template("OAuth2ServerBundle:Authorize:authorize.html.twig")
+     * @Template("@OAuth2Server/Authorize/authorize.html.twig")
      */
     public function validateAuthorizeAction(): array
     {
