@@ -5,14 +5,14 @@ namespace OAuth2\ServerBundle\Tests\Command;
 use Exception;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Command\CreateClientCommand;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * Class CreateClientCommandTest
  */
-class CreateClientCommandTest extends PHPUnit_Framework_TestCase
+class CreateClientCommandTest extends TestCase
 {
     /**
      * testCreateClientWithInvalidScope

@@ -6,14 +6,14 @@ use OAuth2\HttpFoundationBridge\Request;
 use OAuth2\ServerBundle\Manager\ClientManager;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Controller\AuthorizeController;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 /**
  * Class AuthorizeControllerTest
  */
-class AuthorizeControllerTest extends PHPUnit_Framework_TestCase
+class AuthorizeControllerTest extends TestCase
 {
     /**
      * testOpenIdConfig

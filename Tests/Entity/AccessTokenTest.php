@@ -6,12 +6,12 @@ use DateTime;
 use Exception;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Entity\AccessToken;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class AccessTokenTest
  */
-class AccessTokenTest extends PHPUnit_Framework_TestCase
+class AccessTokenTest extends TestCase
 {
     /**
      * testCreate

@@ -5,8 +5,9 @@ namespace OAuth2\ServerBundle\Tests;
 use OAuth2\Request;
 use OAuth2\Response;
 use OAuth2\Server;
+use PHPUnit\Framework\TestCase;
 
-class ContainerTest extends \PHPUnit_Framework_TestCase
+class ContainerTest extends TestCase
 {
     public function testOpenIdConfig()
     {

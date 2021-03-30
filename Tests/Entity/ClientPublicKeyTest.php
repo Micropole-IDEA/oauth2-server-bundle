@@ -6,12 +6,12 @@ use Exception;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Entity\ClientPublicKey;
 use OAuth2\ServerBundle\Entity\Client;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ClientPublicKeyTest
  */
-class ClientPublicKeyTest extends PHPUnit_Framework_TestCase
+class ClientPublicKeyTest extends TestCase
 {
     /**
      * testCreate

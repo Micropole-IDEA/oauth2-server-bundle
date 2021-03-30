@@ -7,12 +7,12 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use OAuth2\ServerBundle\Manager\ScopeManager;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ScopeManagerTest
  */
-class ScopeManagerTest extends PHPUnit_Framework_TestCase
+class ScopeManagerTest extends TestCase
 {
     /**
      * testFindScopesByScopes

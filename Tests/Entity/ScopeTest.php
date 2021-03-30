@@ -5,12 +5,12 @@ namespace OAuth2\ServerBundle\Tests\Entity;
 use Exception;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Entity\Scope;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ScopeTest
  */
-class ScopeTest extends PHPUnit_Framework_TestCase
+class ScopeTest extends TestCase
 {
     /**
      * testCreate

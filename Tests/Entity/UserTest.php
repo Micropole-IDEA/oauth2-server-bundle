@@ -5,12 +5,12 @@ namespace OAuth2\ServerBundle\Tests\Entity;
 use Exception;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Entity\User;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class UserTest
  */
-class UserTest extends PHPUnit_Framework_TestCase
+class UserTest extends TestCase
 {
     /**
      * testCreate

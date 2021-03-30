@@ -4,12 +4,12 @@ namespace OAuth2\ServerBundle\Tests\Entity;
 
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Entity\AuthorizationCode;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class AuthorizationCodeTest
  */
-class AuthorizationCodeTest extends PHPUnit_Framework_TestCase
+class AuthorizationCodeTest extends TestCase
 {
     /**
      * testCreate

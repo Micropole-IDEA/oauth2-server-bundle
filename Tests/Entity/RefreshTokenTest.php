@@ -5,12 +5,12 @@ namespace OAuth2\ServerBundle\Tests\Entity;
 use Exception;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Entity\RefreshToken;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class RefreshTokenTest
  */
-class RefreshTokenTest extends PHPUnit_Framework_TestCase
+class RefreshTokenTest extends TestCase
 {
     /**
      * testCreate
