@@ -3,6 +3,9 @@
 namespace OAuth2\ServerBundle\Tests\Command;
 
 use Exception;
+use OAuth2\ServerBundle\Manager\ScopeManager;
+use OAuth2\ServerBundle\Storage\ClientCredentials;
+use OAuth2\ServerBundle\Storage\Scope;
 use OAuth2\ServerBundle\Tests\ContainerLoader;
 use OAuth2\ServerBundle\Command\CreateClientCommand;
 use PHPUnit\Framework\TestCase;
@@ -21,9 +24,10 @@ class CreateClientCommandTest extends TestCase
      */
     public function testCreateClientWithInvalidScope()
     {
-        try {
+        //try {
             $container = ContainerLoader::buildTestContainer();
             $command = $container->get(CreateClientCommand::class);
+
 
             $clientId = 'Client-ID-' . rand();
             $redirectUris = 'http://brentertainment.com';
@@ -36,10 +40,12 @@ class CreateClientCommandTest extends TestCase
             $statusCode = $command->run($input, $output);
 
             $this->assertEquals(1, $statusCode);
-            $this->assertTrue(false !== strpos($output->fetch(), 'Scope not found, please create it first'));
-        } catch (Exception $exception) {
+            $this->assertTrue(
+                false !== strpos($output->fetch(), 'Scope not found, please create it first')
+            );
+        /*} catch (Exception $exception) {
             throw $exception;
-        }
+        }*/
     }
 
     /**
@@ -58,9 +64,9 @@ class CreateClientCommandTest extends TestCase
             $scope = 'scope1';
 
             // ensure the scope exists
-            $scopeStorage = $container->get('oauth2.storage.scope');
+            $scopeStorage = $container->get(Scope::class);
             if (!$scopeStorage->scopeExists($scope)) {
-                $scopeManager = $container->get('oauth2.scope_manager');
+                $scopeManager = $container->get(ScopeManager::class);
                 $scopeManager->createScope($scope, 'test scope');
             }
 
@@ -72,7 +78,7 @@ class CreateClientCommandTest extends TestCase
             $this->assertEquals(0, $statusCode, $output->fetch());
 
             // verify client details have been stored
-            $storage = $container->get('oauth2.storage.client_credentials');
+            $storage = $container->get(ClientCredentials::class);
             $client  = $storage->getClientDetails($clientId);
 
             $this->assertNotNull($client);

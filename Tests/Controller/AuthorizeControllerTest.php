@@ -26,7 +26,7 @@ class AuthorizeControllerTest extends TestCase
             $container = ContainerLoader::buildTestContainer(
                 array(
                     __DIR__
-                    . '/../../vendor/symfony/symfony/src/Symfony/Bundle/SecurityBundle/Resources/config/security.xml',
+                    . '/../../vendor/symfony/security-bundle/Resources/config/security.xml',
                 )
             );
             $controller = $container->get(AuthorizeController::class);

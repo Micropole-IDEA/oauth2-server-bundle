@@ -8,6 +8,13 @@ use Symfony\Component\Config\FileLocator;
 
 class ContainerLoader
 {
+    /**
+     * @param  array $configs
+     *
+     * @return ContainerBuilder
+     *
+     * @throws \Exception
+     */
     public static function buildTestContainer($configs = array())
     {
         if (!isset($_SERVER['CONTAINER_CONFIG'])) {
@@ -26,6 +33,7 @@ class ContainerLoader
 
         //  give the container some context
         $container->setParameter('bundle_root_dir', __DIR__.'/..');
+        $container->compile();
 
         return $container;
     }

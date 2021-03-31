@@ -4,7 +4,7 @@
         <parameter key="oauth2.server.config" type="collection" />
     </parameters>
     <services>
-        <service id="OAuth2\ServerBundle\Command\CreateClientCommand">
+        <service id="OAuth2\ServerBundle\Command\CreateClientCommand" public="true">
             <argument type="service" id="OAuth2\ServerBundle\Manager\ClientManager"/>
             <tag name="console.command"/>
         </service>
@@ -78,7 +78,7 @@
         <service id="OAuth2\ServerBundle\Storage\RefreshToken">
             <argument type="service" id="doctrine.orm.entity_manager"/>
         </service>
-        <service id="OAuth2\ServerBundle\Storage\Scope">
+        <service id="OAuth2\ServerBundle\Storage\Scope" public="true">
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="service" id="OAuth2\ServerBundle\Manager\ScopeManager"/>
         </service>
