@@ -23,13 +23,8 @@ class AuthorizeControllerTest extends TestCase
     public function testOpenIdConfig()
     {
         try {
-            $container = ContainerLoader::buildTestContainer(
-                array(
-                    __DIR__
-                    . '/../../vendor/symfony/security-bundle/Resources/config/security.xml',
-                )
-            );
-            $controller = $container->get(AuthorizeController::class);
+            $container = ContainerLoader::buildTestContainer();
+
             $clientManager = $container->get(ClientManager::class);
 
             $clientId = 'test-client-' . rand();
@@ -53,8 +48,10 @@ class AuthorizeControllerTest extends TestCase
                    'nonce'         => '123',
                 )
             );
+            $stack = $container->get('request_stack');
+            $stack->push($request);
             $container->set(Request::class, $request);
-
+            $controller = $container->get(AuthorizeController::class);
             $params = $controller->validateAuthorizeAction();
 
             $this->assertArrayHasKey('nonce', $params['qs'], 'optional included param');
@@ -65,8 +62,7 @@ class AuthorizeControllerTest extends TestCase
             $twig = new Environment($loader);
             $template = $twig->load('Authorize/authorize.html.twig');
             $html = $template->render($params);
-
-            $this->assertContains(htmlentities(http_build_query($params['qs'])), $html);
+            $this->assertStringContainsString(htmlentities(http_build_query($params['qs'])), $html);
         } catch (\Exception $exception) {
             throw $exception;
         }

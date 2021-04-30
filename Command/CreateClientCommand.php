@@ -95,5 +95,7 @@ class CreateClientCommand extends Command
             . $client->getClientSecret()
             . '</fg=green>'
         );
+
+        return 0;
     }
 }

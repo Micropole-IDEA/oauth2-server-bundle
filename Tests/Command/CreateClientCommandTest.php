@@ -24,7 +24,7 @@ class CreateClientCommandTest extends TestCase
      */
     public function testCreateClientWithInvalidScope()
     {
-        //try {
+        try {
             $container = ContainerLoader::buildTestContainer();
             $command = $container->get(CreateClientCommand::class);
 
@@ -43,9 +43,9 @@ class CreateClientCommandTest extends TestCase
             $this->assertTrue(
                 false !== strpos($output->fetch(), 'Scope not found, please create it first')
             );
-        /*} catch (Exception $exception) {
+        } catch (Exception $exception) {
             throw $exception;
-        }*/
+        }
     }
 
     /**
@@ -74,13 +74,11 @@ class CreateClientCommandTest extends TestCase
             $output = new BufferedOutput();
 
             $statusCode = $command->run($input, $output);
-
             $this->assertEquals(0, $statusCode, $output->fetch());
 
             // verify client details have been stored
             $storage = $container->get(ClientCredentials::class);
             $client  = $storage->getClientDetails($clientId);
-
             $this->assertNotNull($client);
             $this->assertEquals($redirectUris, $client['redirect_uri']);
             $this->assertEquals(explode(',', $grantTypes), $client['grant_types']);

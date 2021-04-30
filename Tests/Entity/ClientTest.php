@@ -32,7 +32,7 @@ class ClientTest extends TestCase
             $emn->persist($client);
             $emn->flush();
 
-            $stored = $emn->find('OAuth2\ServerBundle\Entity\Client', array('client_id' => $clientId));
+            $stored = $emn->find('OAuth2\ServerBundle\Entity\Client', array('clientId' => $clientId));
 
             $this->assertNotNull($stored);
             $this->assertEquals($clientId, $stored->getClientId());

@@ -5,39 +5,23 @@ namespace OAuth2\ServerBundle\Tests;
 use OAuth2\Request;
 use OAuth2\Response;
 use OAuth2\Server;
+use OAuth2\ServerBundle\Manager\ClientManager;
+use OAuth2\ServerBundle\Manager\ScopeManager;
 use PHPUnit\Framework\TestCase;
 
 class ContainerTest extends TestCase
 {
     public function testOpenIdConfig()
     {
-        $openIdConfig = <<<EOF
-<?xml version="1.0"?>
-<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
-    <parameters>
-        <parameter key="oauth2.storage.authorization_code.class">OAuth2\ServerBundle\Storage\OpenID\AuthorizationCode</parameter>
-
-        <parameter key="oauth2.server.config" type="collection">
-            <parameter key="use_openid_connect">true</parameter>
-            <parameter key="issuer">oauth2-server-bundle</parameter>
-        </parameter>
-    </parameters>
-</container>
-EOF;
-        file_put_contents($tmpFile = tempnam(sys_get_temp_dir(), 'openid-config'), $openIdConfig);
-        $container = ContainerLoader::buildTestContainer(array(
-            __DIR__.'/../vendor/symfony/symfony/src/Symfony/Bundle/SecurityBundle/Resources/config/security.xml',
-            $tmpFile
-        ));
-
+        $container = ContainerLoader::buildTestContainer();
         /** @var Server $server */
-        $server = $container->get('oauth2.server');
+        $server = $container->get(Server::class);
 
         $this->assertTrue($server->getConfig('use_openid_connect'));
         $this->assertNotNull($server->getStorage('public_key'));
 
-        $clientManager = $container->get('oauth2.client_manager');
-        $scopeManager = $container->get('oauth2.scope_manager');
+        $clientManager = $container->get(ClientManager::class);
+        $scopeManager = $container->get(ScopeManager::class);
 
         $clientId = 'test-client-' . rand();
         $redirectUri = 'http://brentertainment.com';
@@ -63,11 +47,11 @@ EOF;
         ));
 
         $response = new Response();
-        $server->handleAuthorizeRequest($request, $response, true);
+        $server->handleAuthorizeRequest($request, $response, true, $clientId);
         $parts = parse_url($response->getHttpHeader('Location'));
         parse_str($parts['query'], $query);
         $code = $server->getStorage('authorization_code')->getAuthorizationCode($query['code']);
 
-        $this->assertArrayHasKey('id_token', $code);
+        $this->assertArrayHasKey('idToken', $code);
     }
 }

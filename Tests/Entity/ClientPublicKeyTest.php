@@ -42,14 +42,13 @@ class ClientPublicKeyTest extends TestCase
             $pubKeyDetails = openssl_pkey_get_details($res);
             $pubKey = $pubKeyDetails['key'];
             $publicKey->setPublicKey($pubKey);
-
             $emn->persist($publicKey);
             $emn->flush();
 
             // test direct access
             $stored = $emn->find(
                 'OAuth2\ServerBundle\Entity\ClientPublicKey',
-                array('client_id' => $client->getClientId())
+                array('clientId' => $client)
             );
 
             $this->assertNotNull($stored);
