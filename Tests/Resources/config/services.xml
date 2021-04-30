@@ -6,7 +6,7 @@
     <parameters>
         <parameter key="doctrine.db.driver">pdo_mysql</parameter>
         <parameter key="doctrine.db.username">root</parameter>
-        <parameter key="doctrine.db.password">waliroot</parameter>
+        <parameter key="doctrine.db.password"></parameter>
         <parameter key="doctrine.db.dbname">oauth2_server_bundle</parameter>
         <parameter key="doctrine.db.host">localhost</parameter>
         <parameter key="doctrine.config_paths" type="collection">
