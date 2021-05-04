@@ -1,8 +1,8 @@
 # OAuth2 Server Bundle
 
-OAuth2 Server Bundle for Symfony 2, built on the [oauth2-server-php](https://github.com/bshaffer/oauth2-server-php) library.
+Fork of OAuth2 Server Bundle for Symfony 3, built on the [oauth2-server-php](https://github.com/bshaffer/oauth2-server-php) library.
 
-[![Build Status](https://secure.travis-ci.org/bshaffer/oauth2-server-bundle.png)](http://travis-ci.org/bshaffer/oauth2-server-bundle)
+[![Build Status](https://secure.travis-ci.org/Micropole-IDEA/oauth2-server-bundle.png)](http://travis-ci.org/Micropole-IDEA/oauth2-server-bundle)
 
 ## Getting Started
 
@@ -42,7 +42,7 @@ public function tokenAction()
 Use composer to add the requirement and download it by running the command:
 
 ``` bash
-$ php composer.phar require bshaffer/oauth2-server-bundle
+$ composer require micropole_idea/oauth2-server-bundle
 ```
 
 Composer will update your composer.json and install the bundle to your project's `vendor/bshaffer` directory.
