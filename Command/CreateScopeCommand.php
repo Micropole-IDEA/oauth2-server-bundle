@@ -72,5 +72,7 @@ class CreateScopeCommand extends Command
         }
 
         $output->writeln('<fg=green>Scope ' . $input->getArgument('scope') . ' created</fg=green>');
+
+	return 0;
     }
 }

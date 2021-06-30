@@ -68,5 +68,7 @@ class CreateUserCommand extends Command
         }
 
         $output->writeln('<fg=green>User ' . $input->getArgument('username') . ' created</fg=green>');
+
+	return 0;
     }
 }
